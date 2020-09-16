@@ -1,4 +1,4 @@
-# Splunk-Meraki-App
+# Splunk Meraki App
 
 The Meraki App for Splunk leverages the data visibility provided by the Meraki to deliver advances analysis for the users.
 This app enables users to monitoring the network traffic, AP & WPA connection, URL and malicious activities that detected by the Meraki Air Mashal in real time.
