@@ -4,9 +4,8 @@ The Meraki App for Splunk leverages the data visibility provided by the Meraki t
 This app enables users to monitoring the network traffic, AP & WPA connection, URL and malicious activities that detected by the Meraki Air Mashal in real time.
 
 <h3>Main features include</h3>
-
 - Network Traffic - Monitoring the network traffic flow<br/>
-- AP & WPA connection - Monitoring success & fail AP & WPA connection<br/>
+- AP & WPA connection - Monitoring success & failed AP & WPA connection<br/>
 - URL - Monitoring requested & blocked URL<br/>
 - Malicious Activities - Detecting Rogue IP, Threat IP and Malicious Files
 
