@@ -1,0 +1,235 @@
+<form theme="dark">
+  <label>Rogue AP &amp; AP Spoofing Threat Detection</label>
+  <search id="basesearch1">
+    <query>
+      index=meraki dvc=* action=blocked app="meraki-events-airmarshal"  signature=rogue_ssid_detected src_mac=* dest_mac=* wired_mac=* bssid=* ssid=* vlan_id=*
+    </query>
+    <earliest>$timerange.earliest$</earliest>
+    <latest>$timerange.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="timerange" searchWhenChanged="true">
+      <label>timerange</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="multiselect" token="ap" searchWhenChanged="true">
+      <label>Access Point</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>dvc</fieldForLabel>
+      <fieldForValue>dvc</fieldForValue>
+      <search base="basesearch1">
+        <query> | dedup dvc | table dvc</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Rogue AP Detection</title>
+      <chart>
+        <search base="basesearch1">
+          <query>| search dvc=$ap$ | timechart  count</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.text">Time Range</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <drilldown>
+          <link target="_blank">/app/meraki_app/rogue_ap__ap_spoofing_threat_detection_audit_activities?form.timerange.earliest=$click.value$&amp;form.ap=$ap$</link>
+        </drilldown>
+      </chart>
+    </panel>
+    <panel>
+      <title>SSID Spoofing Detected</title>
+      <table>
+        <search>
+          <query>index=meraki dvc=* action=blocked app="meraki-events-airmarshal"  signature=ssid_spoofing_detected | timechart  count</query>
+          <earliest>$timerange.earliest$</earliest>
+          <latest>$timerange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <drilldown>
+          <link target="_blank">/app/meraki_app/rogue_ap__ap_spoofing_threat_detection_audit_activities?form.timerange.earliest=$earliest$&amp;form.timerange.latest=$latest$&amp;form.signature=ssid_spoofing_detected&amp;form.ap=$ap$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Rogue SSID</title>
+      <chart>
+        <search base="basesearch1">
+          <query>| search dvc=$ap$ | stats  count by ssid</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.text">SSID</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <drilldown>
+          <link target="_blank">/app/meraki_app/rogue_ap__ap_spoofing_threat_detection_audit_activities?form.timerange.earliest=$earliest$&amp;form.timerange.latest=$latest$&amp;form.ssid=$click.value$&amp;form.ap=$ap$</link>
+        </drilldown>
+      </chart>
+    </panel>
+    <panel>
+      <title>Rogue Wireless BSSID</title>
+      <chart>
+        <search base="basesearch1">
+          <query>| search dvc=$ap$ | stats  count by bssid</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.text">BSSID</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <drilldown>
+          <link target="_blank">/app/meraki_app/rogue_ap__ap_spoofing_threat_detection_audit_activities?form.timerange.earliest=$earliest$&amp;form.timerange.latest=$latest$&amp;form.bssid=$click.value$&amp;form.ap=$ap$</link>
+        </drilldown>
+      </chart>
+    </panel>
+    <panel>
+      <title>Rogue Wired Mac Adress</title>
+      <chart>
+        <search base="basesearch1">
+          <query>| search dvc=$ap$ |  stats count by wired_mac</query>
+        </search>
+        <option name="charting.axisTitleX.text">Wired MAC</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.drilldown">all</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <link target="_blank">/app/meraki_app/rogue_ap__ap_spoofing_threat_detection_audit_activities?form.timerange.earliest=$earliest$&amp;form.timerange.latest=$latest$&amp;form.wm=$click.value$&amp;form.ap=$ap$</link>
+        </drilldown>
+      </chart>
+    </panel>
+    <panel>
+      <title>Rogue VLAN ID</title>
+      <chart>
+        <search base="basesearch1">
+          <query>| search dvc=$ap$ | stats  count by vlan_id</query>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">all</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <link target="_blank">/app/meraki_app/rogue_ap__ap_spoofing_threat_detection_audit_activities?form.timerange.earliest=$earliest$&amp;form.timerange.latest=$latest$&amp;form.vi=$click.value$&amp;form.ap=$ap$</link>
+        </drilldown>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Traffic Flow Between Source MAC with Rogue Destination MAC</title>
+      <viz type="sankey_diagram_app.sankey_diagram">
+        <search base="basesearch1">
+          <query>| search dvc=$ap$ | stats count by src_mac,dest_mac</query>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>
+    </panel>
+  </row>
+</form>

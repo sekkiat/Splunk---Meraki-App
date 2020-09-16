@@ -1,0 +1,88 @@
+<form theme="dark">
+  <label>Deauthentication AP Connection Audit Activities</label>
+  <search id="basesearch1">
+    <query>
+        index=meraki dvc=* action=disconnect src_mac=*  duration=* last_auth_ago=* src_ip=* 
+    </query>
+    <earliest>$timerange.earliest$</earliest>
+    <latest>$timerange.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="timerange" searchWhenChanged="true">
+      <label>timerange</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="multiselect" token="ap" searchWhenChanged="true">
+      <label>Access Point</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <delimiter> OR dvc=</delimiter>
+      <fieldForLabel>dvc</fieldForLabel>
+      <fieldForValue>dvc</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dvc | table dvc</query>
+      </search>
+    </input>
+    <input type="multiselect" token="si" searchWhenChanged="true">
+      <label>Source IP</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>src_ip</fieldForLabel>
+      <fieldForValue>src_ip</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup src_ip | table src_ip</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="sm" searchWhenChanged="true">
+      <label>Source MAC</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>src_mac</fieldForLabel>
+      <fieldForValue>src_mac</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup src_mac | table src_mac</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index=meraki dvc=* (action=connect OR action=disconnect) src_mac=$sm$ duration=* last_auth_ago=* src_ip=$si$ dvc=$ap$ | eval Time = strftime(_time, "%Y-%m-%d %H:%M:%S") 
+|  convert rmunit(duration) as numSecs1
+| eval strSecs1=tostring(numSecs1,"duration")
+| rex field=strSecs1 mode=sed "s/((((\d*)\+)?(\d*):)?(\d*):)?(\d*)/\4 days \5 hrs \6 min \7 sec/"
+| rex field=strSecs1 mode=sed "s/^ days/0 days/"
+|  convert rmunit(last_auth_ago) as numSecs2
+| eval strSecs2=tostring(numSecs2,"duration")
+| rex field=strSecs2 mode=sed "s/((((\d*)\+)?(\d*):)?(\d*):)?(\d*)/\4 days \5 hrs \6 min \7 sec/"
+| rex field=strSecs2 mode=sed "s/^ days/0 days/" |sort - strSecs | table Time, dvc,src_ip,src_mac,strSecs2, strSecs1, aid | rename dvc as "Access Point", src_ip as "Source IP", src_mac as "Source MAC", strSecs as "Longest IP Session", strSecs2 as "Last Authentication", strSecs1 as "Full Connection (Duration)", aid as "Session ID"</query>
+          <earliest>$timerange.earliest$</earliest>
+          <latest>$timerange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

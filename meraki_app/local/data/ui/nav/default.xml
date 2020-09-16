@@ -1,0 +1,41 @@
+<nav search_view="search">
+  <view name="meraki_mr_overview" default="true"/>
+  <collection label="Traffic Flow">
+  	<view name="traffic_flow"/>
+    <view name="allowed_url"/>
+    <collection label="Threat">
+     <view name="threat_detection"/>
+     <view name="air_marshal"/>
+     <view name="blocked_url_monitoring"/>
+     <view name="advance_malware_protection"/>
+    </collection>
+  </collection>
+  <collection label="Authentication">
+  	<view name="disconnected_ip_session"/>
+    <view name="wpa_succeed_authentication"/>
+    <view name="wpa_failed_authentication"/>
+    <view name="ip_session"/>
+  </collection>
+  <collection label="Investigation">
+    <collection label="Traffic Flow">
+        <view name="authentication_ap_connection_audit_activities"/>
+      	<view name="deauthentication_ap_connection_audit_activities"/>
+        <view name="url_request_monitoring_audit_activities"/>
+  		<view name="threat_ip_flow_detection_audit_activities"/>
+    	<view name="rogue_ap__ap_spoofing_threat_detection_audit_activities"/>
+        <view name="traffic_flow_audit_activities"/>
+  		<view name="blocked_url_audit_activities"/>
+  		<view name="advance_malware_protection_audit_activities"/>
+  		<view name="failed_vpn"/>
+    </collection>
+    <collection label="Authentication">
+		<view name="wpa_succeed_authentication_audit_activities"/>
+    	<view name="wpa_failed_authentication_audit_activities"/>
+    </collection>
+  </collection>
+  <view name="connected_devices-by_access_point"/>
+  <view name="search"/>
+  <view name="reports" />
+  <view name="alerts" />
+  <view name="dashboards" />
+</nav>

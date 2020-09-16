@@ -1,0 +1,117 @@
+<form theme="dark">
+  <label>Threat IP Flow Detection Audit Activities</label>
+  <search id="basesearch1">
+    <query>
+       index=meraki dvc=* action=blocked app=meraki-flows transport=* src_ip=* dest_ip=* src_port=* dest_port=* transport=*
+    </query>
+    <earliest>$timerange.earliest$</earliest>
+    <latest>$timerange.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="timerange" searchWhenChanged="true">
+      <label>timerange</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="multiselect" token="ap" searchWhenChanged="true">
+      <label>Access Point</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <delimiter> OR dvc=</delimiter>
+      <fieldForLabel>dvc</fieldForLabel>
+      <fieldForValue>dvc</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dvc | table dvc</query>
+      </search>
+    </input>
+    <input type="dropdown" token="protocol" searchWhenChanged="true">
+      <label>Protocol</label>
+      <search base="basesearch1">
+        <query>| dedup transport | table transport</query>
+      </search>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <fieldForLabel>transport</fieldForLabel>
+      <fieldForValue>transport</fieldForValue>
+    </input>
+    <input type="multiselect" token="si" searchWhenChanged="true">
+      <label>Source IP</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>src_ip</fieldForLabel>
+      <fieldForValue>src_ip</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup src_ip | table src_ip</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="sp" searchWhenChanged="true">
+      <label>Source Port</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <fieldForLabel>src_port</fieldForLabel>
+      <fieldForValue>src_port</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup src_port | table src_port</query>
+      </search>
+      <delimiter> </delimiter>
+    </input>
+    <input type="multiselect" token="di" searchWhenChanged="true">
+      <label>Destination IP</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>dest_ip</fieldForLabel>
+      <fieldForValue>dest_ip</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dest_ip | table dest_ip</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="dp" searchWhenChanged="true">
+      <label>Destination Port</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>dest_port</fieldForLabel>
+      <fieldForValue>dest_port</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dest_port | table dest_port</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index=meraki dvc=$ap$ action=blocked app=meraki-flows transport=$protocol$ src_ip=$si$ dest_ip=$di$ src_port=$sp$ dest_port=$dp$ | eval Time = strftime(_time, "%Y-%m-%d %H:%M:%S") | table Time, dvc,src_ip,src_port, dest_ip,dest_port,transport | rename dvc as "Access Point", src_ip as "Source IP", dest_ip as "Destination IP", dest_port as "Destination Port", src_port as "Source Port", transport as "Protocol"</query>
+          <earliest>$timerange.earliest$</earliest>
+          <latest>$timerange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

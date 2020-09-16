@@ -1,0 +1,176 @@
+<form theme="dark">
+  <label>URL Request Monitoring Audit Activities</label>
+  <search id="basesearch1">
+    <query>
+        index=meraki  dvc=*  action=allowed url=* src_mac=* src_port=* dest_port=* src_ip=* dest_ip=* http_method=* status_code=* http_user_agent=*
+    </query>
+    <earliest>$timerange.earliest$</earliest>
+    <latest>$timerange.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="timerange" searchWhenChanged="true">
+      <label>Time Range</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="multiselect" token="ap" searchWhenChanged="true">
+      <label>Access Point</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <delimiter> OR dvc=</delimiter>
+      <fieldForLabel>dvc</fieldForLabel>
+      <fieldForValue>dvc</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dvc | table dvc</query>
+      </search>
+    </input>
+    <input type="multiselect" token="si" searchWhenChanged="true">
+      <label>Source IP</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>src_ip</fieldForLabel>
+      <fieldForValue>src_ip</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup src_ip | table src_ip</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="sp" searchWhenChanged="true">
+      <label>Source Port</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <fieldForLabel>src_port</fieldForLabel>
+      <fieldForValue>src_port</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup src_port | table src_port</query>
+      </search>
+      <delimiter> </delimiter>
+    </input>
+    <input type="multiselect" token="sm" searchWhenChanged="true">
+      <label>Source MAC</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <valueSuffix>"</valueSuffix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>src_mac</fieldForLabel>
+      <fieldForValue>src_mac</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup src_mac | table src_mac</query>
+      </search>
+    </input>
+    <input type="multiselect" token="di" searchWhenChanged="true">
+      <label>Destination IP</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>dest_ip</fieldForLabel>
+      <fieldForValue>dest_ip</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dest_ip | table dest_ip</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="dp" searchWhenChanged="true">
+      <label>Destination Port</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>dest_port</fieldForLabel>
+      <fieldForValue>dest_port</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dest_port | table dest_port</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="url" searchWhenChanged="true">
+      <label>URL</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>url</fieldForLabel>
+      <fieldForValue>url</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup url | table url</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="sc" searchWhenChanged="true">
+      <label>Status Code</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>status_code</fieldForLabel>
+      <fieldForValue>status_code</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup status_code | table status_code</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="hm" searchWhenChanged="true">
+      <label>HTTP Method</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>http_method</fieldForLabel>
+      <fieldForValue>http_method</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup http_method | table http_method</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="hua" searchWhenChanged="true">
+      <label>HTTP User Agent</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>http_user_agent</fieldForLabel>
+      <fieldForValue>http_user_agent</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup http_user_agent | table http_user_agent</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index=meraki  dvc=*  action=allowed url=$url$ src_mac=$sm$ src_port=$sp$ dest_port=$dp$ src_ip=$si$ dest_ip=$di$  http_method=$hm$ status_code=$sc$ http_user_agent=$hua$ | eval Time = strftime(_time, "%Y-%m-%d %H:%M:%S") | table Time, dvc,src_ip,src_mac,src_port, dest_ip,dest_port,url,status_code,http_method,http_user_agent | rename dvc as "Access Point", src_ip as "Source IP", src_mac as "Source MAC", src_port as "Source Port", dest_ip as "Destination IP", dest_port as "Destination Port", url as "URL", status_code as "Status Code", http_method as "HTTP Method", http_user_agent as "User Agent"</query>
+          <earliest>$timerange.earliest$</earliest>
+          <latest>$timerange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

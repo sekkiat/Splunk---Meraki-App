@@ -1,0 +1,71 @@
+<form theme="dark">
+  <label>Failed VPN Audit Activites</label>
+  <search id="basesearch1">
+    <query>
+     index=meraki vpn failed dvc=* | rex field=_raw "Site-to-site VPN:(?&lt;reason&gt;.+)\." 
+    </query>
+    <earliest>$timerange.earliest$</earliest>
+    <latest>$timerange.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="timerange" searchWhenChanged="true">
+      <label>Time Range</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="multiselect" token="ap" searchWhenChanged="true">
+      <label>Access Point</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <delimiter> OR dvc=</delimiter>
+      <fieldForLabel>dvc</fieldForLabel>
+      <fieldForValue>dvc</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dvc | table dvc</query>
+      </search>
+    </input>
+    <input type="dropdown" token="reason" searchWhenChanged="true">
+      <label>Reason</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <fieldForLabel>reason</fieldForLabel>
+      <fieldForValue>reason</fieldForValue>
+      <search base="basesearch1">
+        <query> | dedup reason</query>
+      </search>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Failed Reason</title>
+      <chart>
+        <search>
+          <query>index=meraki vpn failed | rex field=_raw "Site-to-site VPN:(?&lt;reason&gt;.+)\." | stats count by reason</query>
+          <earliest>$timerange.earliest$</earliest>
+          <latest>$timerange.latest$</latest>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index=meraki vpn failed dvc=$ap$ | rex field=_raw "Site-to-site VPN:(?&lt;reason&gt;.+)\." | search reason="$reason$" |table _time, dvc, host, reason | rename dvc as "Device", host as Host, reason as "Reason"</query>
+          <earliest>$timerange.earliest$</earliest>
+          <latest>$timerange.latest$</latest>
+        </search>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</form>

@@ -1,0 +1,130 @@
+[app/ui]
+version = 8.0.5
+modtime = 1600008791.581118900
+
+[app/launcher]
+version = 8.0.5
+modtime = 1600008791.589095500
+
+[nav/default]
+version = 8.0.5
+modtime = 1600008713.771282800
+
+[views/meraki_mr_overview]
+owner = admin
+version = 8.0.5
+modtime = 1600003677.495443600
+
+[views/traffic_flow]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 8.0.5
+modtime = 1600006136.749131900
+
+[views/disconnected_ip_session]
+owner = admin
+version = 8.0.5
+modtime = 1600005039.871000900
+
+[views/authentication_ap_connection_audit_activities]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 8.0.5
+modtime = 1600006130.497928700
+
+[views/traffic_flow_audit_activities]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 8.0.5
+modtime = 1600006142.667224500
+
+[views/wpa_succeed_authentication]
+owner = admin
+version = 8.0.5
+modtime = 1600006460.419118900
+
+[views/url_request_monitoring_audit_activities]
+owner = admin
+version = 8.0.5
+modtime = 1600006590.243744900
+
+[views/allowed_url]
+owner = admin
+version = 8.0.5
+modtime = 1600006668.024461200
+
+[views/threat_detection]
+owner = admin
+version = 8.0.5
+modtime = 1600006826.385464600
+
+[views/wpa_succeed_authentication_audit_activities]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 8.0.5
+modtime = 1600006866.848495600
+
+[views/authentication__deauthentication_ap_connection_audit_activities]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 8.0.5
+modtime = 1600006897.764039500
+
+[views/threat_ip_flow_detection_audit_activities]
+owner = admin
+version = 8.0.5
+modtime = 1600006946.962146600
+
+[views/air_marshal]
+owner = admin
+version = 8.0.5
+modtime = 1600007251.401358900
+
+[views/rogue_ap__ap_spoofing_threat_detection_audit_activities]
+owner = admin
+version = 8.0.5
+modtime = 1600007323.358235500
+
+[views/wpa_failed_authentication_audit_activities]
+owner = admin
+version = 8.0.5
+modtime = 1600007573.070733800
+
+[views/blocked_url_monitoring]
+owner = admin
+version = 8.0.5
+modtime = 1600007648.566909300
+
+[views/blocked_url_audit_activities]
+owner = admin
+version = 8.0.5
+modtime = 1600007720.451641100
+
+[views/failed_vpn]
+owner = admin
+version = 8.0.5
+modtime = 1600008146.376821700
+
+[views/connected_devices_by_access_point]
+owner = admin
+version = 8.0.5
+modtime = 1600008473.179843700
+
+[app/package/check_for_updates]
+version = 8.0.5
+modtime = 1600008791.597109600
+
+[indexes/meraki]
+owner = admin
+version = 8.0.5
+modtime = 1600013157.308792100
+
+[views/advance_malware_protection]
+owner = admin
+version = 8.0.5
+modtime = 1600050320.795433700

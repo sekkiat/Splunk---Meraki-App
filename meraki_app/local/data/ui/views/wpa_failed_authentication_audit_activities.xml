@@ -1,0 +1,94 @@
+<form theme="dark">
+  <label>WPA Failed Authentication Audit Activities</label>
+  <search id="basesearch1">
+    <query>
+       index=meraki dvc=* action=disconnect "auth_neg_failed='1'" client_mac=* dvc=* src_ip=* channel=*
+    </query>
+    <earliest>$timerange.earliest$</earliest>
+    <latest>$timerange.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="timerange" searchWhenChanged="true">
+      <label>timerange</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="multiselect" token="ap" searchWhenChanged="true">
+      <label>Access Point</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <delimiter> OR dvc=</delimiter>
+      <fieldForLabel>dvc</fieldForLabel>
+      <fieldForValue>dvc</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dvc | table dvc</query>
+      </search>
+    </input>
+    <input type="multiselect" token="si" searchWhenChanged="true">
+      <label>Source IP</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>src_ip</fieldForLabel>
+      <fieldForValue>src_ip</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup src_ip | table src_ip</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="cm" searchWhenChanged="true">
+      <label>Source MAC</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>client_mac</fieldForLabel>
+      <fieldForValue>client_mac</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup client_mac | table client_mac</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="channel" searchWhenChanged="true">
+      <label>Channel</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>channel</fieldForLabel>
+      <fieldForValue>channel</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup channel | table channel</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index=meraki action=disconnect "auth_neg_failed='1'" client_mac=$cm$ dvc=$ap$ src_ip=$si$ channel=$channel$ | eval Time = strftime(_time, "%Y-%m-%d %H:%M:%S") | table Time, dvc,src_ip,client_mac, channel, aid | rename  category as Category, client_mac as "Source MAC", src_ip as "Source IP", channel as "Channel", dvc as "Access Point", aid as "AID"</query>
+          <earliest>$timerange.earliest$</earliest>
+          <latest>$timerange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

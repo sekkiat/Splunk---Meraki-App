@@ -1,0 +1,80 @@
+<form theme="dark">
+  <label>WPA Succeed Authentication Audit Activities</label>
+  <search id="basesearch1">
+    <query>
+       index=meraki  dvc=*   (wireless_event_type=wpa_auth OR wireless_event_type=8021x_auth OR wireless_event_type=8021x_eap_success) client_mac=* client_ip=* dvc=*
+    </query>
+    <earliest>$timerange.earliest$</earliest>
+    <latest>$timerange.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="timerange" searchWhenChanged="true">
+      <label>timerange</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="multiselect" token="ap" searchWhenChanged="true">
+      <label>Access Point</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <delimiter> OR dvc=</delimiter>
+      <fieldForLabel>dvc</fieldForLabel>
+      <fieldForValue>dvc</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dvc | table dvc</query>
+      </search>
+    </input>
+    <input type="multiselect" token="ci" searchWhenChanged="true">
+      <label>Source IP</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>client_ip</fieldForLabel>
+      <fieldForValue>client_ip</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup client_ip | table client_ip</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="cm" searchWhenChanged="true">
+      <label>Source MAC</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>client_mac</fieldForLabel>
+      <fieldForValue>client_mac</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup client_mac | table client_mac</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index=meraki   (wireless_event_type=wpa_auth OR wireless_event_type=8021x_auth OR wireless_event_type=8021x_eap_success) client_mac=$cm$ client_ip=$ci$ dvc=$ap$ | eval Time = strftime(_time, "%Y-%m-%d %H:%M:%S") | table Time, dvc,client_ip,client_mac | rename dvc as "Access Point", client_mac as "Source MAC",client_ip as "Source IP"</query>
+          <earliest>$timerange.earliest$</earliest>
+          <latest>$timerange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

@@ -1,0 +1,143 @@
+<form theme="dark">
+  <label>Rogue AP &amp; AP Spoofing Threat Detection Audit Activities</label>
+  <search id="basesearch1">
+    <query>
+       index=meraki dvc=* action=blocked app="meraki-events-airmarshal"  signature=rogue_ssid_detected src_mac=* dest_mac=* wired_mac=* bssid=* ssid=* vlan_id=*
+    </query>
+    <earliest>$timerange.earliest$</earliest>
+    <latest>$timerange.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="timerange" searchWhenChanged="true">
+      <label>timerange</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="multiselect" token="ap" searchWhenChanged="true">
+      <label>Access Point</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <delimiter> OR dvc=</delimiter>
+      <fieldForLabel>dvc</fieldForLabel>
+      <fieldForValue>dvc</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dvc | table dvc</query>
+      </search>
+    </input>
+    <input type="multiselect" token="sm" searchWhenChanged="true">
+      <label>Source MAC</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>src_mac</fieldForLabel>
+      <fieldForValue>src_mac</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup src_mac | table src_mac</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="dm" searchWhenChanged="true">
+      <label>Destination MAC</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>dest_mac</fieldForLabel>
+      <fieldForValue>dest_mac</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup dest_mac | table dest_mac</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="wm" searchWhenChanged="true">
+      <label>Wired Mac</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>wired_mac</fieldForLabel>
+      <fieldForValue>wired_mac</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup wired_mac | table wired_mac</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="bssid" searchWhenChanged="true">
+      <label>BSSID</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <fieldForLabel>bssid</fieldForLabel>
+      <fieldForValue>bssid</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup bssid | table bssid</query>
+      </search>
+      <delimiter> </delimiter>
+    </input>
+    <input type="multiselect" token="ssid" searchWhenChanged="true">
+      <label>SSID</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <valueSuffix>"</valueSuffix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>ssid</fieldForLabel>
+      <fieldForValue>ssid</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup ssid | table ssid</query>
+      </search>
+    </input>
+    <input type="multiselect" token="vi" searchWhenChanged="true">
+      <label>VLAN ID</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <valueSuffix>"</valueSuffix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>vlan_id</fieldForLabel>
+      <fieldForValue>vlan_id</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup vlan_id | table vlan_id</query>
+      </search>
+    </input>
+    <input type="dropdown" searchWhenChanged="true" token="category">
+      <label>Signature</label>
+      <choice value="*">All</choice>
+      <fieldForLabel>signature</fieldForLabel>
+      <fieldForValue>signature</fieldForValue>
+      <search base="basesearch1">
+        <query>| dedup signature | table signature</query>
+      </search>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index=meraki dvc=$ap$ action=blocked app="meraki-events-airmarshal"  signature=rogue_ssid_detected  src_mac=* dest_mac=$dm$ wired_mac=$wm$ bssid=$bssid$ ssid=$ssid$ vlan_id=$vi$ | eval Time = strftime(_time, "%Y-%m-%d %H:%M:%S") | table Time, dvc,src_mac,dest_mac,wired_mac,bssid, ssid, vlan_id | rename dvc as "Access Point", src_mac as "Source MAC", dest_mac as "Destination MAC", wired_mac as "Phyisical MAC", bssid as BSSID, ssid as SSID, vlan_id as "VLAN ID"</query>
+          <earliest>$timerange.earliest$</earliest>
+          <latest>$timerange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

@@ -1,0 +1,123 @@
+<form theme="dark">
+  <label>Blocked URL Audit Activities</label>
+  <search id="basesearch1">
+    <query>
+      index=meraki  action=blocked url=*   rule="Meraki URL category denied" category=* status_code=* url=* client_ip=* dest_port=* dvc=*
+    </query>
+    <earliest>$timerange.earliest$</earliest>
+    <latest>$timerange.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="timerange" searchWhenChanged="true">
+      <label>timerange</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="multiselect" token="ap" searchWhenChanged="true">
+      <label>Access Point</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>dvc</fieldForLabel>
+      <fieldForValue>dvc</fieldForValue>
+      <search base="basesearch1">
+        <query>  dedup dvc | table dvc</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="url" searchWhenChanged="true">
+      <label>URL</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>url</fieldForLabel>
+      <fieldForValue>url</fieldForValue>
+      <search base="basesearch1">
+        <query> dedup url | table url</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="dropdown" token="category" searchWhenChanged="true">
+      <label>Category</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <fieldForLabel>category</fieldForLabel>
+      <fieldForValue>category</fieldForValue>
+      <search base="basesearch1">
+        <query>dedup category | table category</query>
+      </search>
+      <prefix>"</prefix>
+      <suffix>"</suffix>
+    </input>
+    <input type="multiselect" token="sc" searchWhenChanged="true">
+      <label>Status Code</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>status_code</fieldForLabel>
+      <fieldForValue>status_code</fieldForValue>
+      <search base="basesearch1">
+        <query> dedup status_code | table status_code</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="cp" searchWhenChanged="true">
+      <label>Client IP</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>client_ip</fieldForLabel>
+      <fieldForValue>client_ip</fieldForValue>
+      <search base="basesearch1">
+        <query>dedup client_ip | table client_ip</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+    <input type="multiselect" token="dp" searchWhenChanged="true">
+      <label>Destination Port</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <initialValue>*</initialValue>
+      <valuePrefix>"</valuePrefix>
+      <delimiter>,</delimiter>
+      <fieldForLabel>dest_port</fieldForLabel>
+      <fieldForValue>dest_port</fieldForValue>
+      <search base="basesearch1">
+        <query> dedup dest_port | table dest_port</query>
+      </search>
+      <valueSuffix>"</valueSuffix>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index=meraki  action=blocked rule="Meraki URL category denied" category IN ($category$) status_code IN ($sc$) url IN ($url$) client_ip IN ($cp$) dest_port IN ($dp$) dvc=$ap$  | eval Time = strftime(_time, "%Y-%m-%d %H:%M:%S") | table Time, dvc, category,client_ip,url, dest_port, status_code | rename  category as Category, url as "Visited URL", client_ip as "Source IP", dest_port as "Destination Port", status_code as "Status Code", dvc as "Access Point"</query>
+          <earliest>$timerange.earliest$</earliest>
+          <latest>$timerange.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>
